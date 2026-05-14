@@ -1,6 +1,6 @@
 # SemoDepth
 
-> Paper: [Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation](https://arxiv.org/abs/2605.11840)
+> This repo is the official implementation for [Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation](https://arxiv.org/abs/2605.11840).
 
 Radar-camera depth estimation with **Radar-Modulated Selection (RMS)** — radar features are injected inside the Mamba selective scan via the step size $\Delta_t$ and readout $\mathbf{C}_t$, while the input projection $\mathbf{B}_t$ and state-evolution matrix $\mathbf{A}$ remain image-only. The Mamba main stream carries pure-image tokens; radar enters only via the $\Delta_t$/$\mathbf{C}_t$ paths.
 
