@@ -1,0 +1,13 @@
+torch>=1.13
+torchvision
+numpy
+scipy
+Pillow
+opencv-python
+einops
+matplotlib
+timm
+pyquaternion
+tensorboard
+tqdm
+pytest

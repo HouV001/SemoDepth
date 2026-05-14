@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mambadepth_fusion"
+version = "0.1.0"
+description = "Radar-camera depth estimation with cross-modal Mamba fusion"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "torch>=1.13",
+    "torchvision",
+    "numpy",
+    "scipy",
+    "Pillow",
+    "opencv-python",
+    "tensorboard",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+nuscenes = ["nuscenes-devkit"]
+
+[tool.setuptools.packages.find]
+include = ["mambadepth_fusion*"]

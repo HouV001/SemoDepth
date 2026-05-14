@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+*.pth
+*.ckpt
+*.npy
+events.out.tfevents.*
+.DS_Store
+.idea/
+.vscode/
