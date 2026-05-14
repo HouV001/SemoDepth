@@ -4,7 +4,7 @@
 
 Radar-camera depth estimation built on two core designs:
 
-1. **Radar-Modulated Selection (RMS).** Radar features are injected *inside* the Mamba selective scan via the step size $\Delta_t$ and readout $\mathbf{C}_t$, while the input projection $\mathbf{B}_t$ and state-evolution matrix $\mathbf{A}$ remain image-only. The Mamba main stream carries pure-image tokens; radar enters only through the $\Delta_t$/$\mathbf{C}_t$ paths.
+1. **Radar-Modulated Selection (RMS).** Radar features are injected *inside* the Mamba selective scan via the step size $\Delta_t$ and readout $\mathbf{C}_t$, while the input projection $\mathbf{B}_t$ and state-evolution matrix $\mathbf{A}$ remain image-only. The Mamba main stream carries pure-image tokens; radar enters only through the $\Delta_t / \mathbf{C}_t$ paths.
 2. **Multi-View Scan Pyramid (MVSP).** A hierarchical decoder applies global 4-direction Mamba scans at coarse resolutions, radar-centered windowed scans at mid resolution, and FiLM modulation at fine resolutions — putting scan-based fusion where context matters most and lightweight modulation where local detail dominates.
 
 ## Install
