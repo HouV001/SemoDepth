@@ -66,7 +66,7 @@ gdown 1XleLB5xPMfHPUJ9pUS_ziN2DnH1-v9SC
 
 | Checkpoint                  | Trained on                                       | Eval set                  | MAE@80m | δ1@80m |
 |-----------------------------|--------------------------------------------------|---------------------------|---------|--------|
-| `semodepth_nuscenes.pth`    | nuScenes (160-sweep D_acc, horizon-cleaned)      | nuScenes val (5869 fr.)   | 1284.5  | 0.9436 |
+| `semodepth_nuscenes.pth`    | nuScenes (160-sweep D_acc, horizon-cleaned)      | nuScenes val (5869 fr.)   | 1285    | 0.9436 |
 | `semodepth_zju.pth`         | ZJU-4DRadarCam train                             | ZJU-4DRadarCam test       | 1137    | 0.9035 |
 
 Both checkpoints use `fusion_mode=BE` with `pure_image_tokens=True`. Pass `--max_depth 120` for the nuScenes weight and `--max_depth 80` for the ZJU weight (matches each model's training-time depth ceiling).
