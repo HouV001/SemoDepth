@@ -85,7 +85,7 @@
 <section class="hero">
   <div class="hero-body has-text-centered">
     <div class="container is-max-desktop">
-      <div class="venue-tag">arXiv preprint &middot; under review</div>
+      <div class="venue-tag">arXiv preprint</div>
       <h1 class="title is-2 publication-title">
         Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation
       </h1>
@@ -100,9 +100,6 @@
       <div class="link-buttons">
         <a class="button" href="https://arxiv.org/abs/2605.11840" target="_blank" rel="noopener">
           <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
-        </a>
-        <a class="button" href="https://arxiv.org/pdf/2605.11840" target="_blank" rel="noopener">
-          <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
         </a>
         <a class="button" href="https://github.com/HouV001/SemoDepth" target="_blank" rel="noopener">
           <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
@@ -191,38 +188,40 @@
             <th>Method</th>
             <th>MAE (mm) &darr;</th>
             <th>RMSE (mm) &darr;</th>
-            <th>δ₁ &uarr;</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td rowspan="2">0–50 m</td>
-            <td>Previous best</td><td>1577</td><td>3739</td><td>0.9412</td>
+            <td>TacoDepth (CVPR'25)</td><td>1423.6</td><td>3275.8</td>
           </tr>
           <tr>
             <td><strong>SemoDepth (ours)</strong></td>
-            <td class="best">1041</td><td class="best">3092</td><td class="best">0.9509</td>
+            <td class="best">940.1<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;4.1</span></td>
+            <td class="best">2785.7<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;2.5</span></td>
           </tr>
           <tr>
             <td rowspan="2">0–70 m</td>
-            <td>Previous best</td><td>2028</td><td>5256</td><td>0.9336</td>
+            <td>TacoDepth (CVPR'25)</td><td>1712.6</td><td>3960.5</td>
           </tr>
           <tr>
             <td><strong>SemoDepth (ours)</strong></td>
-            <td class="best">1422</td><td class="best">4394</td><td class="best">0.9431</td>
+            <td class="best">1199.8<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;1.5</span></td>
+            <td class="best">3622.4<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;16.5</span></td>
           </tr>
           <tr>
             <td rowspan="2">0–80 m</td>
-            <td>Previous best</td><td>2231</td><td>5933</td><td>0.9309</td>
+            <td>TacoDepth (CVPR'25)</td><td>1833.4</td><td>4150.2</td>
           </tr>
           <tr>
             <td><strong>SemoDepth (ours)</strong></td>
-            <td class="best">1564</td><td class="best">4954</td><td class="best">0.9404</td>
+            <td class="best">1285.2<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;0.9</span></td>
+            <td class="best">3935.4<span style="font-weight:400;color:#666;font-size:0.85em;"> &plusmn;21.5</span></td>
           </tr>
         </tbody>
       </table>
       <p class="figure-caption" style="text-align:center; margin-top:0.6rem;">
-        Single-frame latency: <strong>26.8 ms</strong> (lowest among compared baselines). See the paper for the full per-method table and ZJU-4DRadarCam results.
+        SemoDepth numbers are mean&nbsp;&plusmn;&nbsp;std over 3 seeds. Single-frame latency: <strong>26.8 ms</strong> (lowest among methods with public releases). See the <a href="https://arxiv.org/abs/2605.11840" target="_blank" rel="noopener">arXiv preprint</a> for the full per-method table and ZJU-4DRadarCam results.
       </p>
     </div>
   </div>
