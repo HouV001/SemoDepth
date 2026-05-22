@@ -221,7 +221,50 @@
         </tbody>
       </table>
       <p class="figure-caption" style="text-align:center; margin-top:0.6rem;">
-        SemoDepth numbers are mean&nbsp;&plusmn;&nbsp;std over 3 seeds. Single-frame latency: <strong>26.8 ms</strong> (lowest among methods with public releases). See the <a href="https://arxiv.org/abs/2605.11840" target="_blank" rel="noopener">arXiv preprint</a> for the full per-method table and ZJU-4DRadarCam results.
+        SemoDepth numbers are mean&nbsp;&plusmn;&nbsp;std over 3 seeds. Single-frame latency: <strong>26.8 ms</strong> (lowest among methods with public releases). See the <a href="https://arxiv.org/abs/2605.11840" target="_blank" rel="noopener">arXiv preprint</a> for the full per-method table.
+      </p>
+    </div>
+
+    <h2 class="section-title" style="margin-top: 3rem;">Results on ZJU-4DRadarCam</h2>
+    <div class="results-table">
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Range</th>
+            <th>Method</th>
+            <th>MAE (mm) &darr;</th>
+            <th>RMSE (mm) &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">0–50 m</td>
+            <td>TacoDepth (CVPR'25)</td><td>1120.1</td><td>2686.7</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1029.2</td><td class="best">2631.6</td>
+          </tr>
+          <tr>
+            <td rowspan="2">0–70 m</td>
+            <td>TacoDepth (CVPR'25)</td><td>1181.8</td><td class="best">2906.3</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1111.6</td><td>2946.9</td>
+          </tr>
+          <tr>
+            <td rowspan="2">0–80 m</td>
+            <td>TacoDepth (CVPR'25)</td><td>1201.1</td><td class="best">2990.7</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1137.2</td><td>3053.0</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="figure-caption" style="text-align:center; margin-top:0.6rem;">
+        Baseline numbers as reported by TacoDepth. SemoDepth attains the best MAE at every range and the best RMSE@50; TacoDepth retains a slight edge on RMSE@70 (+1.4%) and RMSE@80 (+2.1%).
       </p>
     </div>
   </div>
