@@ -1,17 +1,287 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SemoDepth</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SemoDepth: Selection, Not Fusion — Radar-Modulated State Space Models for Radar-Camera Depth Estimation</title>
+  <meta name="description" content="Official project page for SemoDepth. Radar-Modulated Selection (RMS) injects radar inside Mamba's selective scan via the step size Δ and readout C, achieving state-of-the-art radar-camera depth on nuScenes.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SemoDepth — Radar-Modulated State Space Models for Depth Estimation">
+  <meta property="og:description" content="In-scan selection replaces out-of-scan fusion for radar-camera depth. State-of-the-art on nuScenes; lowest single-frame latency.">
+  <meta property="og:image" content="assets/semodepth_arch.png">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1.9.4/css/academicons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@500;700&family=Noto+Sans:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #2b4a8b;
+      --accent-dark: #1f3a72;
+      --muted: #6b7280;
+    }
+    html, body { font-family: 'Noto Sans', system-ui, -apple-system, sans-serif; color: #1f2937; }
+    h1, h2, h3, .title, .subtitle { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+    .hero-body { padding: 3.5rem 1.5rem 2.5rem; }
+    .publication-title { font-weight: 700; line-height: 1.25; }
+    .author-block { margin: 0 0.4rem; white-space: nowrap; }
+    .author-block sup { color: var(--accent); }
+    .affiliation-block { color: var(--muted); margin: 0 0.4rem; }
+    .venue-tag {
+      display: inline-block; background: #eef2f7; color: var(--accent-dark);
+      border-radius: 9999px; padding: 0.2rem 0.9rem; font-weight: 500; font-size: 0.85rem;
+      letter-spacing: 0.04em; margin-bottom: 1.5rem;
+    }
+    .link-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.6rem; }
+    .link-buttons .button {
+      background: #1f2937; color: #fff; border-radius: 9999px; padding: 0.55rem 1.2rem; font-weight: 500;
+    }
+    .link-buttons .button:hover { background: var(--accent); color: #fff; }
+    .link-buttons .button .icon { margin-right: 0.4rem; }
+
+    section { padding: 2.5rem 0; }
+    section.has-background-light { background: #f8f9fb !important; }
+    .section-title { font-size: 1.9rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; }
+    .section-title:after {
+      content: ""; display: block; width: 3rem; height: 3px; background: var(--accent);
+      margin: 0.6rem auto 0; border-radius: 2px;
+    }
+
+    .figure-block { text-align: center; }
+    .figure-block img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 18px rgba(0,0,0,0.06); }
+    .figure-caption { color: var(--muted); font-size: 0.9rem; margin-top: 0.9rem; text-align: left; }
+    .figure-caption b { color: #1f2937; }
+
+    .abstract p { text-align: justify; font-size: 1.05rem; line-height: 1.7; }
+
+    .results-table { margin: 0 auto; max-width: 720px; }
+    .results-table table { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .results-table th { background: var(--accent); color: #fff; font-weight: 500; }
+    .results-table td.best { font-weight: 700; color: var(--accent-dark); }
+
+    .bibtex { background: #1f2937; color: #f3f4f6; border-radius: 8px; padding: 1.2rem 1.4rem; font-size: 0.9rem; overflow-x: auto; }
+    .bibtex .copy-btn {
+      float: right; background: #374151; color: #f3f4f6; border: none; border-radius: 4px;
+      padding: 0.3rem 0.7rem; font-size: 0.8rem; cursor: pointer;
+    }
+    .bibtex .copy-btn:hover { background: var(--accent); }
+
+    footer { text-align: center; padding: 2rem 1rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid #e5e7eb; }
+    footer a { color: var(--accent-dark); }
+  </style>
 </head>
+
 <body>
-    <h1>SemoDepth</h1>
 
-    <p>Official implementation of SemoDepth.</p>
+<!-- ====================================================================
+     HERO
+==================================================================== -->
+<section class="hero">
+  <div class="hero-body has-text-centered">
+    <div class="container is-max-desktop">
+      <div class="venue-tag">arXiv preprint &middot; under review</div>
+      <h1 class="title is-2 publication-title">
+        Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation
+      </h1>
+      <div class="is-size-5 mt-4">
+        <span class="author-block">Zhangcheng Hou<sup>1</sup></span>
+        <span class="author-block">Tomoaki Ohtsuki<sup>1</sup></span>
+      </div>
+      <div class="is-size-6 mt-2">
+        <span class="affiliation-block"><sup>1</sup>Keio University, Yokohama, Japan</span>
+      </div>
 
-    <p>
-        <a href="https://github.com/HouV001/SemoDepth">
-            GitHub Repository
+      <div class="link-buttons">
+        <a class="button" href="https://arxiv.org/abs/2605.11840" target="_blank" rel="noopener">
+          <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
         </a>
-    </p>
+        <a class="button" href="https://arxiv.org/pdf/2605.11840" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+        </a>
+        <a class="button" href="https://github.com/HouV001/SemoDepth" target="_blank" rel="noopener">
+          <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+        </a>
+        <a class="button" href="https://drive.google.com/file/d/1XleLB5xPMfHPUJ9pUS_ziN2DnH1-v9SC/view?usp=drive_link" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-download"></i></span><span>Weights</span>
+        </a>
+        <a class="button" href="#bibtex">
+          <span class="icon"><i class="fas fa-quote-left"></i></span><span>BibTeX</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     ARCHITECTURE
+==================================================================== -->
+<section>
+  <div class="container is-max-desktop">
+    <div class="figure-block">
+      <img src="assets/semodepth_arch.png" alt="SemoDepth architecture: RMS injects radar into the selective scan; MVSP allocates fusion across decoder resolutions.">
+      <p class="figure-caption">
+        <b>SemoDepth overview.</b>
+        <b>(a) Pipeline.</b> A ResNet-34 image encoder and a PCA-GM radar GSE produce the image pyramid $c_0,\dots,c_4$ and a single radar feature map whose level-wise projections form the radar pyramid $r_0,\dots,r_4$. The <b>Multi-View Scan Pyramid (MVSP)</b> allocates fusion by resolution: FiLM modulation at the finest levels (Tier&nbsp;1), radar-centred windowed RMS at the mid level (Tier&nbsp;2), and full-image four-direction RMS at the coarsest levels (Tier&nbsp;3).
+        <b>(b) Radar-Modulated Selection (RMS).</b> Radar enters via additive modulations to the step size $\boldsymbol{\Delta}_t$ and readout $\mathbf{C}_t$ (dashed red), while the input projection $\mathbf{B}_t$ and state-evolution matrix $\mathbf{A}$ remain image-only (blue). All radar projections are zero-initialised, so at step&nbsp;0 the block is bit-equivalent to vanilla Mamba.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     ABSTRACT
+==================================================================== -->
+<section class="has-background-light">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Abstract</h2>
+    <div class="abstract">
+      <p>
+        Radar-camera depth estimation must turn an ultra-sparse, all-weather, metric radar signal into a dense per-pixel depth map. Existing methods — concatenation, confidence-aware gating, sparse supervision, graph-based extraction — combine radar and image features <em>outside</em> the backbone's sequence operator, and even cross-modal Mamba variants leave the selection mechanism itself unimodal. We argue that the selection mechanism is the right place for radar to enter.
+      </p>
+      <p>
+        We introduce <strong>Radar-Modulated Selection (RMS)</strong>, a minimal way to inject radar into Mamba's selective scan: radar modulates the scan from within, adding zero-initialised perturbations to the step size <span style="font-family:'JetBrains Mono';">Δ</span> and readout <span style="font-family:'JetBrains Mono';">C</span> while leaving the input projection <span style="font-family:'JetBrains Mono';">B</span> and state dynamics <span style="font-family:'JetBrains Mono';">A</span> image-only. The construction is exactly equivalent to a pretrained image-only Mamba at initialisation, so radar only influences the model where it improves accuracy. Two further properties follow that out-of-scan fusion cannot offer: <em>linear-cost cross-modal coupling</em> at every recurrence step, and a natural fallback to the image-only backbone when radar is absent.
+      </p>
+      <p>
+        We deploy RMS in a <strong>Multi-View Scan Pyramid (MVSP)</strong> that matches the fusion operator to radar's spatial reach at each scale. <strong>SemoDepth</strong> achieves state-of-the-art on nuScenes, reducing MAE by 34.0%, 29.9%, and 29.9% over the previous best at the 50&nbsp;m, 70&nbsp;m, and 80&nbsp;m evaluation ranges, while attaining the lowest single-frame latency (26.8&nbsp;ms). A further ablation shows that out-of-scan feature blending adds no accuracy on top of RMS — empirical validation that in-scan selection can replace out-of-scan fusion.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     KEY IDEAS
+==================================================================== -->
+<section>
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Key ideas</h2>
+    <div class="columns">
+      <div class="column">
+        <h3 class="title is-5">1. Radar-Modulated Selection (RMS)</h3>
+        <p>
+          Inside each Mamba block, radar features contribute additive, zero-initialised modulations to the per-token step size <strong>Δ</strong> (memory horizon) and readout <strong>C</strong> (what the state emits), while the input projection <strong>B</strong> and state matrix <strong>A</strong> stay strictly image-driven. The block is bit-equivalent to vanilla Mamba at step zero, so the pretrained image-only solution is preserved exactly — radar gradient flows only where it earns accuracy.
+        </p>
+      </div>
+      <div class="column">
+        <h3 class="title is-5">2. Multi-View Scan Pyramid (MVSP)</h3>
+        <p>
+          A three-tier decoder matches the fusion operator to radar's reach at each resolution: scene-wide four-direction RMS at the coarsest scales, radar-centred windowed RMS at the mid scale, and constant-cost FiLM at the finest scales. Radar stays live at every level, with scan compute concentrated where radar evidence has the longest reach. Replacing the two scan tiers with FiLM degrades MAE@80 by 18%.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     RESULTS
+==================================================================== -->
+<section class="has-background-light">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Results on nuScenes</h2>
+    <div class="results-table">
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Range</th>
+            <th>Method</th>
+            <th>MAE (mm) &darr;</th>
+            <th>RMSE (mm) &darr;</th>
+            <th>δ₁ &uarr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">0–50 m</td>
+            <td>Previous best</td><td>1577</td><td>3739</td><td>0.9412</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1041</td><td class="best">3092</td><td class="best">0.9509</td>
+          </tr>
+          <tr>
+            <td rowspan="2">0–70 m</td>
+            <td>Previous best</td><td>2028</td><td>5256</td><td>0.9336</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1422</td><td class="best">4394</td><td class="best">0.9431</td>
+          </tr>
+          <tr>
+            <td rowspan="2">0–80 m</td>
+            <td>Previous best</td><td>2231</td><td>5933</td><td>0.9309</td>
+          </tr>
+          <tr>
+            <td><strong>SemoDepth (ours)</strong></td>
+            <td class="best">1564</td><td class="best">4954</td><td class="best">0.9404</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="figure-caption" style="text-align:center; margin-top:0.6rem;">
+        Single-frame latency: <strong>26.8 ms</strong> (lowest among compared baselines). See the paper for the full per-method table and ZJU-4DRadarCam results.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     QUALITATIVE
+==================================================================== -->
+<section>
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Qualitative comparisons</h2>
+    <div class="figure-block" style="margin-bottom: 2rem;">
+      <img src="assets/qualitative_picked.png" alt="Qualitative predictions on nuScenes: RGB, baselines, SemoDepth, accumulated LiDAR ground truth.">
+      <p class="figure-caption">
+        <b>nuScenes.</b> RGB input, predictions from competing methods, SemoDepth, and accumulated LiDAR ground truth (rightmost). SemoDepth recovers thin structures (poles, sign posts) and metric scale on distant vehicles where prior methods over-smooth.
+      </p>
+    </div>
+    <div class="figure-block">
+      <img src="assets/qualitative_zju.png" alt="Qualitative predictions on ZJU-4DRadarCam: campus driving scenes.">
+      <p class="figure-caption">
+        <b>ZJU-4DRadarCam.</b> Campus-driving scenes with 4D radar. SemoDepth transfers without architectural changes, only swapping the dataset's depth ceiling.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     BIBTEX
+==================================================================== -->
+<section id="bibtex" class="has-background-light">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Citation</h2>
+    <div class="bibtex">
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('bibtex-block').textContent); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500);">Copy</button>
+<pre id="bibtex-block" style="background:transparent;color:inherit;padding:0;margin:0;">@article{hou2026semodepth,
+  title   = {Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation},
+  author  = {Hou, Zhangcheng and Ohtsuki, Tomoaki},
+  journal = {arXiv preprint arXiv:2605.11840},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================================
+     FOOTER
+==================================================================== -->
+<footer>
+  <p>
+    Page template adapted from <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a>.
+    Source available at <a href="https://github.com/HouV001/SemoDepth" target="_blank" rel="noopener">HouV001/SemoDepth</a>.
+  </p>
+</footer>
+
+<!-- MathJax for inline TeX in the figure caption -->
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </body>
 </html>
