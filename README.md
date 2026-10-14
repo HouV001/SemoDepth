@@ -1,6 +1,6 @@
-# SemoDepth
+# [NeurIPS 2026] Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation
 
-> This repo is the official implementation for [Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation](https://arxiv.org/abs/2605.11840).
+> Official implementation of **SemoDepth** for the NeurIPS 2026 paper *Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation* ([arXiv:2605.11840](https://arxiv.org/abs/2605.11840)).
 
 Radar-camera depth estimation built on two core designs:
 
