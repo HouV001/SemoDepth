@@ -8,7 +8,7 @@
 
   <!-- Open Graph -->
   <meta property="og:title" content="SemoDepth — Radar-Modulated State Space Models for Depth Estimation">
-  <meta property="og:description" content="In-scan selection replaces out-of-scan fusion for radar-camera depth. State-of-the-art on nuScenes; lowest single-frame latency.">
+  <meta property="og:description" content="In-scan selection replaces out-of-scan fusion for radar-camera depth. State-of-the-art on nuScenes; lowest single-frame latency among methods with a public release.">
   <meta property="og:image" content="assets/semodepth_arch.png">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
@@ -126,9 +126,9 @@
     <div class="figure-block">
       <img src="assets/semodepth_arch.png" alt="SemoDepth architecture: RMS injects radar into the selective scan; MVSP allocates fusion across decoder resolutions.">
       <p class="figure-caption">
-        <b>SemoDepth overview.</b>
-        <b>(a) Pipeline.</b> A ResNet-34 image encoder and a PCA-GM radar GSE produce the image pyramid $c_0,\dots,c_4$ and a single radar feature map whose level-wise projections form the radar pyramid $r_0,\dots,r_4$. The <b>Multi-View Scan Pyramid (MVSP)</b> allocates fusion by resolution: FiLM modulation at the finest levels (Tier&nbsp;1), radar-centred windowed RMS at the mid level (Tier&nbsp;2), and full-image four-direction RMS at the coarsest levels (Tier&nbsp;3).
-        <b>(b) Radar-Modulated Selection (RMS).</b> Radar enters via additive modulations to the step size $\boldsymbol{\Delta}_t$ and readout $\mathbf{C}_t$ (dashed red), while the input projection $\mathbf{B}_t$ and state-evolution matrix $\mathbf{A}$ remain image-only (blue). All radar projections are zero-initialised, so at step&nbsp;0 the block is bit-equivalent to vanilla Mamba.
+        <b>SemoDepth architecture.</b>
+        <b>(a) Pipeline.</b> A ResNet-34 image encoder and a radar graph structure extractor (GSE) built on PCA-GM produce the image pyramid $c_0,\dots,c_4$ and one radar feature map. Projections ($1{\times}1$) of this map at each level form the radar pyramid $r_0,\dots,r_4$. MVSP allocates fusion by resolution. FiLM modulates the two finest levels (Tier&nbsp;1). Windowed RMS around each projected radar return serves the middle level (Tier&nbsp;2). RMS over the full image in four directions serves the two coarsest levels (Tier&nbsp;3).
+        <b>(b) Radar-Modulated Selection (RMS).</b> Radar adds modulations to the step size $\boldsymbol{\Delta}_t$ and readout $\mathbf{C}_t$ (teal arrows). The input projection $\mathbf{B}_t$ is computed from the image only (blue arrows), and the state matrix $\mathbf{A}$ never sees radar. The state update block applies zero order hold (ZOH) discretization and the recurrence $\mathbf{h}_t = \bar{\mathbf{A}}_t\mathbf{h}_{t-1} + \bar{\mathbf{B}}_t x_t$. The readout block emits $y_t = \mathbf{C}_t^{\top}\mathbf{h}_t$. All radar projections start at zero, so the block starts as vanilla Mamba.
       </p>
     </div>
   </div>
@@ -142,13 +142,13 @@
     <h2 class="section-title">Abstract</h2>
     <div class="abstract">
       <p>
-        Radar-camera depth estimation must turn an ultra-sparse, all-weather, metric radar signal into a dense per-pixel depth map. Existing methods — concatenation, confidence-aware gating, sparse supervision, graph-based extraction — combine radar and image features <em>outside</em> the backbone's sequence operator, and even cross-modal Mamba variants leave the selection mechanism itself unimodal. We argue that the selection mechanism is the right place for radar to enter.
+        Radar camera depth estimation turns a very sparse but metric radar signal into a dense depth map. Existing methods combine radar and image features outside the sequence operator of the backbone, through concatenation, confidence gating, sparse supervision, or graph based extraction. Mamba variants for multimodal fusion also leave the selection mechanism itself unimodal. We argue that selection is the right place for radar to enter.
       </p>
       <p>
-        We introduce <strong>Radar-Modulated Selection (RMS)</strong>, a minimal way to inject radar into Mamba's selective scan: radar modulates the scan from within, adding zero-initialised perturbations to the step size <span style="font-family:'JetBrains Mono';">Δ</span> and readout <span style="font-family:'JetBrains Mono';">C</span> while leaving the input projection <span style="font-family:'JetBrains Mono';">B</span> and state dynamics <span style="font-family:'JetBrains Mono';">A</span> image-only. The construction is exactly equivalent to a pretrained image-only Mamba at initialisation, so radar only influences the model where it improves accuracy. Two further properties follow that out-of-scan fusion cannot offer: <em>linear-cost cross-modal coupling</em> at every recurrence step, and a natural fallback to the image-only backbone when radar is absent.
+        We introduce <strong>Radar-Modulated Selection (RMS)</strong>, which injects radar inside the selective scan of Mamba. Radar adds learned perturbations, initialised at zero, to the step size $\boldsymbol{\Delta}$ and the readout $\mathbf{C}$. The input projection $\mathbf{B}$ and the state matrix $\mathbf{A}$ never see radar. At initialisation the block equals a pretrained image Mamba, so radar gains influence only where it improves accuracy. The construction also couples the two modalities at linear cost and falls back to the image backbone when radar is missing.
       </p>
       <p>
-        We deploy RMS in a <strong>Multi-View Scan Pyramid (MVSP)</strong> that matches the fusion operator to radar's spatial reach at each scale. <strong>SemoDepth</strong> achieves state-of-the-art on nuScenes, reducing MAE by 34.0%, 29.9%, and 29.9% over the previous best at the 50&nbsp;m, 70&nbsp;m, and 80&nbsp;m evaluation ranges, while attaining the lowest single-frame latency (26.8&nbsp;ms). A further ablation shows that out-of-scan feature blending adds no accuracy on top of RMS — empirical validation that in-scan selection can replace out-of-scan fusion.
+        We deploy RMS in a <strong>Multi-View Scan Pyramid (MVSP)</strong> that matches the fusion operator to the reach of radar at each scale. On nuScenes, <strong>SemoDepth</strong> reduces MAE by 34.0%, 29.9%, and 29.9% over the previous best within 50, 70, and 80&nbsp;m. It also has the lowest single frame latency among methods with a public release (26.8&nbsp;ms). A feature blend placed before the scan adds no accuracy on top of RMS, which supports the view that selection inside the scan can replace fusion outside it. When twice as many spurious radar returns as true ones are injected, the MAE@80 of SemoDepth rises by 1.4%, against 33.6% for a Mamba baseline that fuses radar before the scan.
       </p>
     </div>
   </div>
@@ -164,13 +164,13 @@
       <div class="column">
         <h3 class="title is-5">1. Radar-Modulated Selection (RMS)</h3>
         <p>
-          Inside each Mamba block, radar features contribute additive, zero-initialised modulations to the per-token step size <strong>Δ</strong> (memory horizon) and readout <strong>C</strong> (what the state emits), while the input projection <strong>B</strong> and state matrix <strong>A</strong> stay strictly image-driven. The block is bit-equivalent to vanilla Mamba at step zero, so the pretrained image-only solution is preserved exactly — radar gradient flows only where it earns accuracy.
+          Inside each Mamba block, radar features contribute additive, zero-initialised modulations to the per-token step size <strong>Δ</strong> (memory horizon) and readout <strong>C</strong> (what the state emits), while the input projection <strong>B</strong> and state matrix <strong>A</strong> never see radar. At step zero the block equals a vanilla Mamba scan, so the pretrained image solution is preserved exactly and radar gradients grow only where they improve accuracy. With <strong>A</strong> and <strong>B</strong> unimodal, the model falls back to image behaviour under sparse or missing radar.
         </p>
       </div>
       <div class="column">
         <h3 class="title is-5">2. Multi-View Scan Pyramid (MVSP)</h3>
         <p>
-          A three-tier decoder matches the fusion operator to radar's reach at each resolution: scene-wide four-direction RMS at the coarsest scales, radar-centred windowed RMS at the mid scale, and constant-cost FiLM at the finest scales. Radar stays live at every level, with scan compute concentrated where radar evidence has the longest reach. Replacing the two scan tiers with FiLM degrades MAE@80 by 18%.
+          A three-tier decoder matches the fusion operator to radar's reach at each resolution: scene-wide four-direction RMS at the coarsest scales, radar-centred windowed RMS at the mid scale, and constant-cost FiLM at the finest scales. Radar stays active at every level, with scan compute concentrated where radar evidence reaches furthest. MVSP lowers MAE@80 by 18% compared with FiLM at every level.
         </p>
       </div>
     </div>
@@ -270,6 +270,14 @@
         Baseline numbers as reported by TacoDepth. SemoDepth attains the best MAE at every range and the best RMSE@50; TacoDepth retains a slight edge on RMSE@70 (+1.4%) and RMSE@80 (+2.1%).
       </p>
     </div>
+
+    <h2 class="section-title" style="margin-top: 3rem;">Robustness to radar corruption</h2>
+    <div class="figure-block">
+      <img src="assets/robustness_curves.png" alt="Change in MAE@80 on nuScenes under spurious radar returns, dropped returns, and depth noise, for SemoDepth and FusionMamba.">
+      <p class="figure-caption">
+        <b>Change in MAE@80 on nuScenes under radar corruption at test time.</b> (a) Spurious returns added, as a share of the true returns. (b) Share of true returns kept. (c) Gaussian noise on the depth of true returns. FusionMamba&dagger; is our reimplementation of FusionMamba, which shares supervision, loss, recipe, and parameter budget with SemoDepth but fuses radar before the scan. Both models see identical corrupted inputs. With radar removed entirely, SemoDepth loses 3.3% (against 155% for FusionMamba&dagger;) and still beats every published method on nuScenes.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -282,13 +290,13 @@
     <div class="figure-block" style="margin-bottom: 2rem;">
       <img src="assets/qualitative_picked.png" alt="Qualitative predictions on nuScenes: RGB, baselines, SemoDepth, accumulated LiDAR ground truth.">
       <p class="figure-caption">
-        <b>nuScenes.</b> RGB input, predictions from competing methods, SemoDepth, and accumulated LiDAR ground truth (rightmost). SemoDepth recovers thin structures (poles, sign posts) and metric scale on distant vehicles where prior methods over-smooth.
+        <b>nuScenes.</b> Rows show night, day, and rain. Columns show the RGB input, CaFNet, Li et al., Singh et al., and SemoDepth. Each panel gives the MAE and RMSE of the frame in millimetres against sparse LiDAR within 80&nbsp;m. SemoDepth has the lowest MAE and RMSE on every frame. The largest margin is in rain, with 535&nbsp;mm MAE against 1915&nbsp;mm for the next best baseline.
       </p>
     </div>
     <div class="figure-block">
       <img src="assets/qualitative_zju.png" alt="Qualitative predictions on ZJU-4DRadarCam: campus driving scenes.">
       <p class="figure-caption">
-        <b>ZJU-4DRadarCam.</b> Campus-driving scenes with 4D radar. SemoDepth transfers without architectural changes, only swapping the dataset's depth ceiling.
+        <b>ZJU-4DRadarCam.</b> Columns show the RGB input, radar returns over the RGB, the SemoDepth prediction, and LiDAR ground truth from a single sweep. The frames were drawn at random from the test split, so the spread of errors reflects the test set rather than selection. SemoDepth recovers vehicle and lane geometry although the radar provides only about 380 returns per frame.
       </p>
     </div>
   </div>
