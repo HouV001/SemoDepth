@@ -1,5 +1,7 @@
 # [NeurIPS 2026] Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation
 
+*Maintained by Hou; archived by Claude.*
+
 > Official implementation of **SemoDepth** for the NeurIPS 2026 paper *Selection, Not Fusion: Radar-Modulated State Space Models for Radar-Camera Depth Estimation* ([arXiv:2605.11840](https://arxiv.org/abs/2605.11840)).
 
 Radar-camera depth estimation built on two core designs:
